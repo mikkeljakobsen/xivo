@@ -25,7 +25,7 @@ import pdb
 
 FEATURE_TYPES = ["sift", "surf", "orb"]
 WINDOW_SIZES = [5, 10, 15, 20]
-DATAROOT = "/local2/Data/tumvi_undistorted"
+DATAROOT = "/home/xivo/output"
 EPIPOLAR_TOL = 5e-3
 #USE_RANSAC = False
 PLOT_MATCHES = False
@@ -95,7 +95,7 @@ class MonoGTDepthCalc:
         self.image_data = json.load(image_data_file)
 
         # Open up ground truth file and load timestamps and ground truth gsb
-        gt_filename = "tumvi_room" + str(room_number) + "_gt"
+        gt_filename = dataroot + "/tumvi_room" + str(room_number) + "_gt"
         self.load_gt_file(gt_filename)
 
         # Get feature detector and matcher

@@ -6,7 +6,8 @@
 
 # TMPDIR=$(mktemp -d -p .)
 # TUMVIROOT="/local2/Data/tumvi/exported/euroc/512_16"
-TUMVIROOT="/home/feixh/Data/tumvi/exported/euroc/512_16"
+# TUMVIROOT="/home/feixh/Data/tumvi/exported/euroc/512_16"
+TUMVIROOT="/home/mikkel/dataset_xivo/tumvi"
 
 mkdir $OUTPUT
 python scripts/run_and_eval_pyxivo.py -out_dir $OUTPUT -root $TUMVIROOT -seq room1 ${1}

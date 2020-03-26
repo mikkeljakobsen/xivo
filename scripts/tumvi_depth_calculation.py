@@ -36,7 +36,7 @@ import pdb
 
 FEATURE_TYPES = ["sift", "surf", "orb"]
 WINDOW_SIZES = [5, 10, 15, 20]
-DATAROOT = "/local2/Data/tumvi_undistorted"
+DATAROOT = "/home/xivo/output"
 EPIPOLAR_TOL = 0.025
 USE_RANSAC = True
 PLOT_MATCHES = False

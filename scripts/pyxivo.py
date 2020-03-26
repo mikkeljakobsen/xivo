@@ -30,7 +30,7 @@ parser.add_argument(
     '-use_viewer', default=False, action='store_true',
     help='visualize trajectory and feature tracks if set')
 parser.add_argument(
-     '-mode', default='eval', help='[eval|dump] mode to handle the state estimates. eval: save states for evaluation; dump: save to json file for further processing')
+     '-mode', default='dump', help='[eval|dump] mode to handle the state estimates. eval: save states for evaluation; dump: save to json file for further processing')
 
 
 def main(args):

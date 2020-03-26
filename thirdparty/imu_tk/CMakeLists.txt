@@ -18,7 +18,7 @@ find_package(Ceres REQUIRED)
 include_directories(./include
                     /usr/include
                     ${Boost_INCLUDE_DIRS}
-                    ${EIGEN_INCLUDE_DIR}
+                    ${EIGEN3_INCLUDE_DIR}
                     ${CERES_INCLUDE_DIRS})
 
 #Vis3D
