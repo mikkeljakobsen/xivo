@@ -7,7 +7,7 @@ namespace xivo {
 
 namespace adapter {
 
-void AddFeature(FeaturePtr f) {
+void AddFeature(const FeaturePtr f) {
   if (!Graph::instance()->HasFeature(f)) {
     return;
   }
@@ -29,7 +29,7 @@ void AddFeature(FeaturePtr f) {
   Optimizer::instance()->AddFeature(adapter_f, adapter_obs);
 }
 
-void AddGroup(GroupPtr g) {
+void AddGroup(const GroupPtr g) {
   if (!Graph::instance()->HasGroup(g)) {
     return;
   }
