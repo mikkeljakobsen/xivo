@@ -9,8 +9,8 @@ namespace xivo {
 
 namespace adapter {
 
-void AddFeature(FeaturePtr f);
-void AddGroup(GroupPtr g);
+void AddFeature(const FeaturePtr f);
+void AddGroup(const GroupPtr g);
 
 } // namespace adapter
 
