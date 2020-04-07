@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.5)
 project(xivo)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
+set(CMAKE_PREFIX_PATH /opt/ros/melodic)
+set(OpenCV_INCLUDE_DIRS "/usr/include/opencv4/opencv;/usr/include")
 
 find_package(roscpp REQUIRED)
 find_package(catkin REQUIRED COMPONENTS
