@@ -74,6 +74,8 @@ class DumpModeSaver(BaseSaver):
         now = estimator.now()
         g = np.array(estimator.gsc())
         T = g[:, 3]
+        feature = np.array(estimator.InstateFeatureXc())
+        print(len(feature))
 
         if np.linalg.norm(T) > 0:
             try:

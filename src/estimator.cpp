@@ -1296,6 +1296,58 @@ void Estimator::InstateFeaturePositionsAndCovs(int max_output, int &npts,
   }
 }
 
+void Estimator::TrackedFeaturePositionsAndCovs(int max_output, int &npts,
+  MatX3 &feature_positions, MatX6 &feature_covs, MatX2 &feature_last_px,
+  VecXi &feature_ids)
+{
+  // Retrieve visibility graph
+  Graph& graph{*Graph::instance()};
+
+  // Get vectors of instate features and all features
+  std::vector<xivo::FeaturePtr> tracked_features = graph.GetFeaturesIf(
+    [](FeaturePtr f) -> bool { return f->track_status() == TrackStatus::TRACKED;}
+  );
+  MakePtrVectorUnique(tracked_features);
+  npts = std::min((int) tracked_features.size(), max_output);
+
+  // Sort features by subfilter depth uncertainty. (anything else takes
+  // computation and more time)
+  std::sort(tracked_features.begin(), tracked_features.end(),
+            Criteria::CandidateComparison);
+
+  feature_positions.resize(npts,3);
+  feature_covs.resize(npts,6);
+  feature_last_px.resize(npts,2);
+  feature_ids.resize(npts);
+
+  int i = 0; 
+  for (auto it = tracked_features.begin();
+       it != tracked_features.end() && i < npts;
+       ) {
+    FeaturePtr f = *it;
+
+    Vec3 Xd = f->Xd();
+    feature_positions(i,0) = Xd(0);
+    feature_positions(i,1) = Xd(1);
+    feature_positions(i,2) = Xd(2);
+
+    int foff = kFeatureBegin + 3*f->sind();
+    Mat3 cov = P_.block<3,3>(foff, foff);
+
+    feature_covs.block(i, 0, 1, 6) <<
+      cov(0,0), cov(0,1), cov(0,2), cov(1,1), cov(1,2), cov(2,2);
+
+    feature_ids(i) = f->id();
+
+    Vec2 xp = f->xp();
+    feature_last_px(i,0) = xp(0);
+    feature_last_px(i,1) = xp(1);
+
+    ++i;
+    ++it;
+  }
+}
+
 
 VecXi Estimator::InstateFeatureIDs() const
 {
@@ -1368,6 +1420,28 @@ MatX3 Estimator::InstateFeatureXc() const
   int i = 0; 
   for (auto it = instate_features_.begin();
        it != instate_features_.end() && i < num_features;
+       ) {
+    FeaturePtr f = *it;
+    Vec3 Xc = f->Xc();
+    feature_positions(i,0) = Xc(0);
+    feature_positions(i,1) = Xc(1);
+    feature_positions(i,2) = Xc(2);
+    ++i;
+    ++it;
+  }
+  return feature_positions;
+}
+
+
+MatX3 Estimator::OosFeatureXc() const
+{
+  int num_features = oos_features_.size();
+
+  MatX3 feature_positions(num_features,3);
+
+  int i = 0; 
+  for (auto it = oos_features_.begin();
+       it != oos_features_.end() && i < num_features;
        ) {
     FeaturePtr f = *it;
     Vec3 Xc = f->Xc();

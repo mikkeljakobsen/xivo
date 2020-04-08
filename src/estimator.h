@@ -124,7 +124,10 @@ public:
   MatX6 InstateFeatureCovs() const;
   MatX3 InstateFeatureXc(int n_output) const;
   MatX3 InstateFeatureXc() const;
+  MatX3 OosFeatureXc() const;
   void InstateFeaturePositionsAndCovs(int max_output, int &npts,
+    MatX3 &positions, MatX6 &covs, MatX2 &pixels, VecXi &feature_ids);
+  void TrackedFeaturePositionsAndCovs(int max_output, int &npts,
     MatX3 &positions, MatX6 &covs, MatX2 &pixels, VecXi &feature_ids);
   VecXi InstateFeatureIDs(int n_output) const;
   VecXi InstateFeatureIDs() const;

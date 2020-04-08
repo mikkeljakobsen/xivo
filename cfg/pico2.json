@@ -14,7 +14,7 @@
 
   // algorithmic-level knobs
   "integration_method": "PrinceDormand", // "PrinceDormand", "RK4", //, Fehlberg
-  "use_OOS": true, // update with Out-Of-State features
+  "use_OOS": false, // update with Out-Of-State features
   "use_depth_opt": true,  // depth optimization
   "use_MH_gating": true,
   "use_1pt_RANSAC": false,   
@@ -46,8 +46,8 @@
 
   // memory
   "memory": {
-    "max_features": 256,
-    "max_groups": 256  // max groups should increase as allowed group lifetime increases
+    "max_features": 2560,
+    "max_groups": 2560  // max groups should increase as allowed group lifetime increases
   },
 
   // gravity constant
@@ -206,8 +206,8 @@
     "use_prediction": false,
     "mask_size": 15,
     "margin": 8, // image boundary to mask out
-    "num_features_min": 45,
-    "num_features_max": 60,
+    "num_features_min": 450,
+    "num_features_max": 600,
     "max_pixel_displacement": 64,
     "normalize": false,
     "match_dropped_tracks": false,

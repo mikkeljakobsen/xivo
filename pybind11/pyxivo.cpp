@@ -153,6 +153,10 @@ public:
     return estimator_->InstateFeatureXc();
   }
 
+  MatX3 OosFeatureXc() {
+    return estimator_->OosFeatureXc();
+  }
+
   VecXi InstateFeatureSinds() {
     return estimator_->InstateFeatureSinds();
   }
@@ -226,6 +230,7 @@ PYBIND11_MODULE(pyxivo, m) {
       .def("InstateFeatureSinds", py::overload_cast<int>(&EstimatorWrapper::InstateFeatureSinds))
       .def("InstateFeatureXc", py::overload_cast<int>(&EstimatorWrapper::InstateFeatureXc))
       .def("InstateFeatureXc", py::overload_cast<>(&EstimatorWrapper::InstateFeatureXc))
+      .def("OosFeatureXc", py::overload_cast<>(&EstimatorWrapper::OosFeatureXc))
       .def("InstateGroupIDs", &EstimatorWrapper::InstateGroupIDs)
       .def("InstateGroupSinds", &EstimatorWrapper::InstateGroupSinds)
       .def("InstateGroupPoses", &EstimatorWrapper::InstateGroupPoses)

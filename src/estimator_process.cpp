@@ -58,7 +58,9 @@ bool EstimatorProcess::Handle(EstimatorMessage *message) {
       Eigen::Matrix<number_t, Eigen::Dynamic, 2> InstatePx;
       VecXi feature_ids;
       int npts;
-      estimator_->InstateFeaturePositionsAndCovs(max_pts_to_publish_, npts,
+      //estimator_->InstateFeaturePositionsAndCovs(max_pts_to_publish_, npts,
+      //  InstateXs, InstateCov, InstatePx, feature_ids);
+      estimator_->TrackedFeaturePositionsAndCovs(max_pts_to_publish_, npts,
         InstateXs, InstateCov, InstatePx, feature_ids);
       map_publisher_->Publish(msg->ts(), npts, InstateXs, InstateCov,
         InstatePx, feature_ids);
