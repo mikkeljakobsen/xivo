@@ -7,6 +7,7 @@ from transforms3d.quaternions import mat2quat
 class BaseSaver:
     def __init__(self, args):
         self.results = []
+        self.sparseSizes = []
         self.resultsPath = os.path.join(args.out_dir, 'tumvi_{}_cam{}'.format(args.seq, args.cam_id))
     def onVisionUpdate(self, estimator, datum):
         pass
@@ -74,8 +75,7 @@ class DumpModeSaver(BaseSaver):
         now = estimator.now()
         g = np.array(estimator.gsc())
         T = g[:, 3]
-        feature = np.array(estimator.InstateFeatureXc())
-        print(len(feature))
+        features = np.array(estimator.TrackedFeatureImageLocation(1000))
 
         if np.linalg.norm(T) > 0:
             try:
@@ -86,13 +86,18 @@ class DumpModeSaver(BaseSaver):
                 entry['Timestamp'] = ts
                 entry['TranslationXYZ'] = [T[0], T[1], T[2]]
                 entry['QuaternionWXYZ'] = [q[0], q[1], q[2], q[3]]
+                entry['SparseDepth'] = [feature.tolist() for feature in features],
                 self.results.append(entry)
+                if len(features) > 0:
+                    self.sparseSizes.append(np.median(features[:, 2][features[:, 2]<5.0]))
 
-                with open(self.resultsPath, 'w') as fid:
-                    json.dump(self.results, fid, indent=2)
+                #with open(self.resultsPath, 'w') as fid:
+                #    json.dump(self.results, fid, indent=2)
             except np.linalg.linalg.LinAlgError:
                 pass
 
     def onResultsReady(self):
         with open(self.resultsPath, 'w') as fid:
             json.dump(self.results, fid, indent=2)
+        print(self.sparseSizes)
+        print(np.average(self.sparseSizes))

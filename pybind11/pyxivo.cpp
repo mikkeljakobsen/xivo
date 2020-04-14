@@ -153,6 +153,10 @@ public:
     return estimator_->InstateFeatureXc();
   }
 
+  MatX3 TrackedFeatureImageLocation(int max_output) {
+    return estimator_->TrackedFeatureImageLocation(max_output);
+  }
+
   MatX3 OosFeatureXc() {
     return estimator_->OosFeatureXc();
   }
@@ -230,6 +234,7 @@ PYBIND11_MODULE(pyxivo, m) {
       .def("InstateFeatureSinds", py::overload_cast<int>(&EstimatorWrapper::InstateFeatureSinds))
       .def("InstateFeatureXc", py::overload_cast<int>(&EstimatorWrapper::InstateFeatureXc))
       .def("InstateFeatureXc", py::overload_cast<>(&EstimatorWrapper::InstateFeatureXc))
+      .def("TrackedFeatureImageLocation", py::overload_cast<int>(&EstimatorWrapper::TrackedFeatureImageLocation))
       .def("OosFeatureXc", py::overload_cast<>(&EstimatorWrapper::OosFeatureXc))
       .def("InstateGroupIDs", &EstimatorWrapper::InstateGroupIDs)
       .def("InstateGroupSinds", &EstimatorWrapper::InstateGroupSinds)

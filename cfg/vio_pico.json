@@ -1,5 +1,5 @@
 {
-    "estimator_cfg": "cfg/pico2.json",
+    "estimator_cfg": "cfg/pico3.json",
     "viewer_cfg": "cfg/phab_viewer.json",
 
     "visualize": true,
