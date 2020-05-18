@@ -57,7 +57,7 @@ def main(args):
         imu_path = os.path.join(args.root, 'dataset-{}_512_16'.format(args.seq),
                                 'mav0', 'imu0', 'data.csv')
     elif args.dataset == 'xivo':
-        img_dir = os.path.join(args.root, args.seq, 'images')#'cam0', 'data')
+        img_dir = os.path.join(args.root, args.seq, 'image')#'cam0', 'data')
 
         imu_path = os.path.join(args.root, args.seq, 'imu0', 'data.csv')
     else:
