@@ -1,6 +1,7 @@
 #include "pybind11/eigen.h"
 #include "pybind11/numpy.h"
 #include "pybind11/pybind11.h"
+#include "pybind11/stl.h"
 
 #include "estimator.h"
 #include "opencv2/core/eigen.hpp"
@@ -157,12 +158,30 @@ public:
     return estimator_->TrackedFeatureImageLocation(max_output);
   }
 
+  MatX3 TrackedFeatureImageLocation(int max_output, VecXi &feature_ids) {
+    return estimator_->TrackedFeatureImageLocation(max_output, feature_ids);
+  }
+
+  MatX3 TrackedFeaturePositions(int max_output, VecXi &feature_ids) {
+    return estimator_->TrackedFeaturePositions(max_output, feature_ids);
+  }
+
+  VecXi GetTrackedFeatureIds() {
+    return estimator_->GetTrackedFeatureIds();
+  }
+
   MatX3 OosFeatureXc() {
     return estimator_->OosFeatureXc();
   }
 
   VecXi InstateFeatureSinds() {
     return estimator_->InstateFeatureSinds();
+  }
+  VecXi AllGroupIDs() {
+    return estimator_->AllGroupIDs();
+  }
+  MatX7 AllGroupPoses() {
+    return estimator_->AllGroupPoses();
   }
 
   VecXi InstateGroupIDs() {
@@ -235,10 +254,15 @@ PYBIND11_MODULE(pyxivo, m) {
       .def("InstateFeatureXc", py::overload_cast<int>(&EstimatorWrapper::InstateFeatureXc))
       .def("InstateFeatureXc", py::overload_cast<>(&EstimatorWrapper::InstateFeatureXc))
       .def("TrackedFeatureImageLocation", py::overload_cast<int>(&EstimatorWrapper::TrackedFeatureImageLocation))
+      .def("TrackedFeatureImageLocation", py::overload_cast<int, VecXi &>(&EstimatorWrapper::TrackedFeatureImageLocation))
+      .def("TrackedFeaturePositions", py::overload_cast<int, VecXi &>(&EstimatorWrapper::TrackedFeaturePositions))
+      .def("GetTrackedFeatureIds", &EstimatorWrapper::GetTrackedFeatureIds)
       .def("OosFeatureXc", py::overload_cast<>(&EstimatorWrapper::OosFeatureXc))
       .def("InstateGroupIDs", &EstimatorWrapper::InstateGroupIDs)
       .def("InstateGroupSinds", &EstimatorWrapper::InstateGroupSinds)
       .def("InstateGroupPoses", &EstimatorWrapper::InstateGroupPoses)
+      .def("AllGroupIDs", &EstimatorWrapper::AllGroupIDs)
+      .def("AllGroupPoses", &EstimatorWrapper::AllGroupPoses)
       .def("InstateGroupCovs", &EstimatorWrapper::InstateGroupCovs)
       .def("num_instate_features", &EstimatorWrapper::num_instate_features)
       .def("num_instate_groups", &EstimatorWrapper::num_instate_groups)

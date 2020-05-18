@@ -6,6 +6,8 @@ from transforms3d.quaternions import mat2quat
 
 class BaseSaver:
     def __init__(self, args):
+        self.estimator = []
+        self.set_of_feature_ids = []
         self.results = []
         self.sparseSizes = []
         self.resultsPath = os.path.join(args.out_dir, 'tumvi_{}_cam{}'.format(args.seq, args.cam_id))
@@ -75,8 +77,15 @@ class DumpModeSaver(BaseSaver):
         now = estimator.now()
         g = np.array(estimator.gsc())
         T = g[:, 3]
-        features = np.array(estimator.TrackedFeatureImageLocation(1000))
-
+        feature_ids = estimator.GetTrackedFeatureIds()
+        features = [feature.tolist() for feature in np.array(estimator.TrackedFeatureImageLocation(150, feature_ids)) if feature[2] < 10.0]
+        self.estimator = estimator
+        self.set_of_feature_ids.append(feature_ids)
+        #for i, feature_ids in enumerate(self.set_of_feature_ids):
+        #    features = [feature.tolist() for feature in np.array(self.estimator.TrackedFeaturePositions(150, feature_ids)) if feature[2] < 10.0]
+        #    if len(features) > 0:
+        #        print(i, ":", len(feature_ids), "features. FeatureID", feature_ids[0], features[0])
+        #    else: print(i, len(feature_ids))
         if np.linalg.norm(T) > 0:
             try:
                 q = mat2quat(g[:3, :3])  # [w, x, y, z]
@@ -86,10 +95,11 @@ class DumpModeSaver(BaseSaver):
                 entry['Timestamp'] = ts
                 entry['TranslationXYZ'] = [T[0], T[1], T[2]]
                 entry['QuaternionWXYZ'] = [q[0], q[1], q[2], q[3]]
-                entry['SparseDepth'] = [feature.tolist() for feature in features],
+                entry['SparseDepth'] = features,
                 self.results.append(entry)
                 if len(features) > 0:
-                    self.sparseSizes.append(np.median(features[:, 2][features[:, 2]<5.0]))
+                    self.sparseSizes.append(np.median(np.array(features)[:, 2]))
+
 
                 #with open(self.resultsPath, 'w') as fid:
                 #    json.dump(self.results, fid, indent=2)
@@ -99,5 +109,6 @@ class DumpModeSaver(BaseSaver):
     def onResultsReady(self):
         with open(self.resultsPath, 'w') as fid:
             json.dump(self.results, fid, indent=2)
+        print(np.sort(np.array(self.estimator.AllGroupIDs())))
         print(self.sparseSizes)
         print(np.average(self.sparseSizes))

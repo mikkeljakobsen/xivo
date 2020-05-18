@@ -124,7 +124,10 @@ public:
   MatX6 InstateFeatureCovs() const;
   MatX3 InstateFeatureXc(int n_output) const;
   MatX3 InstateFeatureXc() const;
+  MatX3 TrackedFeaturePositions(int max_output, VecXi &feature_ids) const;
   MatX3 TrackedFeatureImageLocation(int max_output) const;
+  VecXi GetTrackedFeatureIds() const;
+  MatX3 TrackedFeatureImageLocation(int max_output, VecXi &feature_ids) const;
   MatX3 OosFeatureXc() const;
   void InstateFeaturePositionsAndCovs(int max_output, int &npts,
     MatX3 &positions, MatX6 &covs, MatX2 &pixels, VecXi &feature_ids);
@@ -136,6 +139,8 @@ public:
   VecXi InstateFeatureSinds() const;
   VecXi InstateGroupIDs() const;
   MatX7 InstateGroupPoses() const;
+  VecXi AllGroupIDs() const;
+  MatX7 AllGroupPoses() const;
   MatX InstateGroupCovs() const;
   VecXi InstateGroupSinds() const;
 

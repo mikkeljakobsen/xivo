@@ -1206,15 +1206,115 @@ MatX3 Estimator::InstateFeatureXc(int n_output) const {
   return feature_positions;
 }
 
+MatX3 Estimator::TrackedFeaturePositions(int max_output, VecXi &feature_ids) const {
+    // Retrieve visibility graph
+  Graph& graph{*Graph::instance()};
+  // Get vectors of instate features and all features
+  std::vector<xivo::FeaturePtr> tracked_features;
+  for (int id = 0; id < feature_ids.size(); id++)
+  {
+    if(graph.HasFeature(feature_ids[id]))
+      tracked_features.push_back(graph.GetFeature(feature_ids[id]));
+  }
+  MakePtrVectorUnique(tracked_features);
+  int npts = std::min((int) tracked_features.size(), max_output);
+
+  // Sort features by subfilter depth uncertainty. (anything else takes
+  // computation and more time)
+  std::sort(tracked_features.begin(), tracked_features.end(),
+            Criteria::CandidateComparison);
+
+  MatX3 feature_positions(npts,3);
+
+  int i = 0; 
+  for (auto it = tracked_features.begin();
+       it != tracked_features.end() && i < npts;
+       ) {
+    FeaturePtr f = *it;
+    Vec3 Xs = f->Xs();
+    feature_positions(i,0) = Xs(0);
+    feature_positions(i,1) = Xs(1);
+    feature_positions(i,2) = Xs(2);
+    ++i;
+    ++it;
+  }
+  return feature_positions;
+}
+
+MatX3 Estimator::TrackedFeatureImageLocation(int max_output, VecXi &feature_ids) const {
+    // Retrieve visibility graph
+  Graph& graph{*Graph::instance()};
+  // Get vectors of instate features and all features
+  std::vector<xivo::FeaturePtr> tracked_features;
+  for (int id = 0; id < feature_ids.size(); id++)
+  {
+    if(graph.HasFeature(feature_ids[id]))
+      tracked_features.push_back(graph.GetFeature(feature_ids[id]));
+  }
+  MakePtrVectorUnique(tracked_features);
+  int npts = std::min((int) tracked_features.size(), max_output);
+
+  // Sort features by subfilter depth uncertainty. (anything else takes
+  // computation and more time)
+  std::sort(tracked_features.begin(), tracked_features.end(),
+            Criteria::CandidateComparison);
+
+  MatX3 feature_positions(npts,3);
+
+  int i = 0; 
+  for (auto it = tracked_features.begin();
+       it != tracked_features.end() && i < npts;
+       ) {
+    FeaturePtr f = *it;
+
+    Vec3 Xc = f->Xc();
+    Vec2 xp = f->xp();
+    feature_positions(i,0) = xp(0);
+    feature_positions(i,1) = xp(1);
+    feature_positions(i,2) = Xc(2);
+    ++i;
+    ++it;
+  }
+  return feature_positions;
+}
+
+VecXi Estimator::GetTrackedFeatureIds() const {
+  // Retrieve visibility graph
+  Graph& graph{*Graph::instance()};
+  // Get vectors of ALL features
+  std::vector<xivo::FeaturePtr> tracked_features = graph.GetFeatures();
+  /*VecXi tracked_feature_ids;
+  for (auto f : tracked_features)
+    tracked_feature_ids.push_back(f->id());
+  return tracked_feature_ids;*/
+  int num_features = tracked_features.size();
+
+  // Get all features
+  VecXi FeatureIDs(num_features);
+
+  int i = 0;
+  for (auto it = tracked_features.begin();
+       it != tracked_features.end() && i < num_features;
+       ) {
+    FeaturePtr f = *it;
+    FeatureIDs(i) = f->id();
+    ++i;
+    ++it;
+  }
+  return FeatureIDs;
+}
+
 MatX3 Estimator::TrackedFeatureImageLocation(int max_output) const {
 
   // Retrieve visibility graph
   Graph& graph{*Graph::instance()};
 
-  // Get vectors of instate features and all features
-  std::vector<xivo::FeaturePtr> tracked_features = graph.GetFeaturesIf(
-    [](FeaturePtr f) -> bool { return f->track_status() == TrackStatus::TRACKED;}
-  );
+  // Get vectors of tracked features
+  //std::vector<xivo::FeaturePtr> tracked_features = graph.GetFeaturesIf(
+  //  [](FeaturePtr f) -> bool { return f->track_status() == TrackStatus::TRACKED;}
+  //);
+  // Get vectors of ALL features
+  std::vector<xivo::FeaturePtr> tracked_features = graph.GetFeatures();
   MakePtrVectorUnique(tracked_features);
   int npts = std::min((int) tracked_features.size(), max_output);
 
@@ -1582,6 +1682,59 @@ MatX7 Estimator::InstateGroupPoses() const
   return group_poses;
 }
 
+VecXi Estimator::AllGroupIDs() const
+{
+  // Retrieve visibility graph
+  Graph& graph{*Graph::instance()};
+  std::vector<GroupPtr> groups = graph.GetGroups();
+  int num_groups = groups.size();
+
+  VecXi GroupIDs(num_groups);
+
+  int i = 0;
+  for (auto it = groups.begin();
+       it != groups.end() && i<num_groups;) {
+    GroupPtr g = *it;
+    GroupIDs(i) = g->id();
+    ++i;
+    ++it;
+  }
+  return GroupIDs;
+}
+
+MatX7 Estimator::AllGroupPoses() const
+{
+  // Retrieve visibility graph
+  Graph& graph{*Graph::instance()};
+  std::vector<GroupPtr> groups = graph.GetGroups();
+
+  int num_groups = groups.size();
+
+  MatX7 group_poses(num_groups, 7);
+
+  int i = 0;
+  for (auto it = groups.begin();
+       it != groups.end() && i < num_groups;
+       ) {
+    GroupPtr g = *it;
+    Vec3 Tsb = g->Tsb();
+    Mat3 Rsb = g->Rsb().matrix();
+    Quat Qsb(Rsb);
+
+    group_poses(i,0) = Qsb.x();
+    group_poses(i,1) = Qsb.y();
+    group_poses(i,2) = Qsb.z();
+    group_poses(i,3) = Qsb.w();
+    group_poses(i,4) = Tsb(0);
+    group_poses(i,5) = Tsb(1);
+    group_poses(i,6) = Tsb(2);
+
+    ++i;
+    ++it;
+  }
+
+  return group_poses;
+}
 
 MatX Estimator::InstateGroupCovs() const
 {

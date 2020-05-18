@@ -94,8 +94,7 @@ def main(args):
         #     print('{:6}/{:6}'.format(i, len(data)))
         if isinstance(content, tuple):
             gyro, accel = content
-            estimator.InertialMeas(ts, gyro[0], gyro[1], gyro[2], accel[0],
-                                   accel[1], accel[2])
+            estimator.InertialMeas(ts, gyro[0], gyro[1], gyro[2], accel[0], accel[1], accel[2])
         else:
             estimator.VisualMeas(ts, content)
             estimator.Visualize()
