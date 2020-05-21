@@ -54,7 +54,7 @@ Viewer::Viewer(const Json::Value &cfg, const std::string &name)
       width_, height_, fx_, fy_, cx_, cy_, znear_, zfar_));
 
   camera_state_->SetModelViewMatrix(pangolin::ModelViewLookAtRDF(
-      0.5f, 0.2f, 0.0f, 0.0f, 0.0f, 0.0f, 0.f, 0.0f, 1.0f));
+      1.0f, 0.2f, 1.0f, 0.0f, 0.0f, 0.0f, 0.f, 0.0f, 1.0f));
 
   float aspect = width_ / (float)height_;
   pangolin::View &camera_view = pangolin::Display("cam").SetAspect(aspect);
@@ -129,7 +129,7 @@ void Viewer::Refresh() {
 
   // DrawGrid(half_grid_size_);
   glColor3f(0.25f, 0.25f, 0.25f);
-  pangolin::glDraw_z0(0.2, cfg_.get("grid_size", 20).asInt());
+  pangolin::glDraw_x0(0.2, cfg_.get("grid_size", 20).asInt());
 
   // draw axis for body frame
   pangolin::glDrawAxis(gsb_.matrix(), 0.2);
